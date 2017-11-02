@@ -78,7 +78,7 @@ class IngresoController extends Controller
 
    			$idarticulo = $request->get('idarticulo');
    			$cantidad = $request->get('cantidad');
-   			$precio_compra = $request->get('cantidad');
+   			$precio_compra = $request->get('precio_compra');
    			$precio_venta = $request->get('precio_venta');
 
 
