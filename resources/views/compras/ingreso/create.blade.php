@@ -19,6 +19,7 @@
 
 	{!!Form::open(array('url'=>'compras/ingreso','method'=>'POST','autocomplete'=>'off'))!!}
 		{{Form::token()}}
+		<!-- cabecera -->
 		<div class="row">
 			<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
 				<div class="form-group">
@@ -30,6 +31,7 @@
 					</select>
 				</div>
 			</div>
+
 			<div class="col-lg-4 col-sm-4 col-md-4 col-xs-12">
 				<div class="form-group">
 					<label for="tipo_comprobante">Tipo Comprobante</label>
@@ -40,20 +42,26 @@
 					</select>
 				</div>
 			</div>
+
 			<div class="col-lg-4 col-sm-4 col-md-4 col-xs-12">
 				<div class="form-group">
 					<label for="serie_comprobante">Serie Comprobante</label>
 					<input type="text" name="serie_comprobante" value="{{old('serie_comprobante')}}" class="form-control" placeholder="Serie Comprobante"> 
 				</div>
 			</div>
+
 			<div class="col-lg-4 col-sm-4 col-md-4 col-xs-12">
 				<div class="form-group">
 					<label for="num_comprobante">Número Comprobante</label>
 					<input type="text" name="num_comprobante" required value="{{old('num_comprobante')}}" class="form-control" placeholder="Serie Comprobante"> 
 				</div>
 			</div>
-		</div>
 
+		</div>
+		<!-- endcabecera -->
+		
+
+		<!-- Body -->
 		<div class="row">
 			
 			<div class="panel panel-primary">
@@ -143,13 +151,14 @@
 				Addproducto();
 			});
 		});
+
 		var contador=0;
 		total=0;
 		subtotal=[];
 		$('#guardar').hide();
 
 		function Addproducto(){
-			idarticulo=$('#idarticulo').val();
+			idarticulo=$('#pidarticulo').val();
 			articulo=$('#pidarticulo option:selected').text();
 			cantidad=$('#pcantidad').val();
 			precio_compra=$('#pprecio_compra').val();
