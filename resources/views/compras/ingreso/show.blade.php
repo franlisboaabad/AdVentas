@@ -54,7 +54,11 @@
 						<tbody>
 							@foreach($detalles as $det)
 								<tr>
-									<td>{{$det->cantidad}}</td>
+									<td>{{ $det->articulo }}</td>
+									<td>{{ $det->cantidad }}</td>
+									<td>{{ $det->precio_compra }}</td>
+									<td>{{ $det->precio_venta }}</td>
+									<td>{{ $det->cantidad * $det->precio_compra}}</td>
 								</tr>
 							@endforeach	
 						</tbody>
