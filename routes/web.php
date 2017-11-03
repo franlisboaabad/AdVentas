@@ -22,6 +22,7 @@ Route::resource('almacen/articulo','ArticuloController');
 
 // VENTAS
 Route::resource('ventas/cliente','ClienteController');
+Route::resource('ventas/venta','VentaController');
 
 //COMPRAS
 Route::resource('compras/proveedor','ProveedorController');
