@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth/login');
 });
 
 // ALMACEN
@@ -27,3 +27,12 @@ Route::resource('ventas/venta','VentaController');
 //COMPRAS
 Route::resource('compras/proveedor','ProveedorController');
 Route::resource('compras/ingreso','IngresoController');
+
+//SEGURIDAD
+Route::resource('seguridad/usuario','UsuarioController');
+
+
+Route::auth();
+
+Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/{slug?}','HomeController@index');
