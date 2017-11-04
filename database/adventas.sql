@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2017-10-31 09:21:04
+Date: 2017-11-04 14:05:43
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -24,14 +24,14 @@ CREATE TABLE `articulo` (
   `idcategoria` int(11) NOT NULL,
   `codigo` varchar(50) DEFAULT NULL,
   `nombre` varchar(100) NOT NULL,
-  `stok` int(11) NOT NULL,
+  `stock` int(11) NOT NULL,
   `descripcion` varchar(255) DEFAULT NULL,
-  `imagen` varchar(50) NOT NULL,
+  `imagen` varchar(255) NOT NULL,
   `estado` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`idarticulo`),
   KEY `idcategoria` (`idcategoria`),
   CONSTRAINT `articulo_ibfk_1` FOREIGN KEY (`idcategoria`) REFERENCES `categoria` (`idcategoria`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of articulo
@@ -47,7 +47,7 @@ CREATE TABLE `categoria` (
   `descripcion` varchar(255) DEFAULT NULL,
   `estado` bit(1) NOT NULL,
   PRIMARY KEY (`idcategoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of categoria
@@ -69,7 +69,7 @@ CREATE TABLE `detalle_ingreso` (
   KEY `idingreso` (`idingreso`),
   CONSTRAINT `detalle_ingreso_ibfk_1` FOREIGN KEY (`idarticulo`) REFERENCES `articulo` (`idarticulo`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `detalle_ingreso_ibfk_2` FOREIGN KEY (`idingreso`) REFERENCES `ingreso` (`idingreso`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Actualizar stock de mi tabla productos | despues de insertar un detalle ingreso';
 
 -- ----------------------------
 -- Records of detalle_ingreso
@@ -80,7 +80,7 @@ CREATE TABLE `detalle_ingreso` (
 -- ----------------------------
 DROP TABLE IF EXISTS `detalle_venta`;
 CREATE TABLE `detalle_venta` (
-  `iddetalle_venta` int(11) NOT NULL,
+  `iddetalle_venta` int(11) NOT NULL AUTO_INCREMENT,
   `idventa` int(11) DEFAULT NULL,
   `idarticulo` int(11) DEFAULT NULL,
   `cantidad` int(11) NOT NULL,
@@ -113,10 +113,25 @@ CREATE TABLE `ingreso` (
   PRIMARY KEY (`idingreso`),
   KEY `idproveedor` (`idproveedor`),
   CONSTRAINT `ingreso_ibfk_1` FOREIGN KEY (`idproveedor`) REFERENCES `persona` (`idpersona`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of ingreso
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for migrations
+-- ----------------------------
+DROP TABLE IF EXISTS `migrations`;
+CREATE TABLE `migrations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Records of migrations
 -- ----------------------------
 
 -- ----------------------------
@@ -133,11 +148,32 @@ CREATE TABLE `persona` (
   `telefono` varchar(15) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`idpersona`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of persona
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for users
+-- ----------------------------
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Records of users
+-- ----------------------------
+INSERT INTO `users` VALUES ('1', 'Frank Lisboa Abad', 'franklisboaabad@gmail.com', '$2y$10$dQvRVNmaJA3Jm0CR5iA.3ONSq8t6d9dLs4m8unmDGao4YMIO4r3Jy', null, '2017-11-03 08:53:38', '2017-11-03 08:53:38');
+INSERT INTO `users` VALUES ('2', 'fransis', 'ideassoftwarepiura@gmail.com', '$2y$10$UJZRc4Fu1MK80X7EinFS7OxkOLoBxhPaEsgWGrxXRk.e96C/OHFlq', null, '2017-11-03 11:18:45', '2017-11-03 11:18:45');
 
 -- ----------------------------
 -- Table structure for venta
@@ -158,8 +194,20 @@ CREATE TABLE `venta` (
   KEY `idusuario` (`idusuario`),
   KEY `idcliente` (`idcliente`),
   CONSTRAINT `venta_ibfk_2` FOREIGN KEY (`idcliente`) REFERENCES `persona` (`idpersona`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of venta
 -- ----------------------------
+DROP TRIGGER IF EXISTS `StockIngreso`;
+DELIMITER ;;
+CREATE TRIGGER `StockIngreso` BEFORE INSERT ON `detalle_ingreso` FOR EACH ROW UPDATE  articulo SET stock = stock + NEW.cantidad
+WHERE articulo.idarticulo = NEW.idarticulo
+;;
+DELIMITER ;
+DROP TRIGGER IF EXISTS `stockVenta`;
+DELIMITER ;;
+CREATE TRIGGER `stockVenta` AFTER INSERT ON `detalle_venta` FOR EACH ROW UPDATE articulo SET stock = stock - NEW.cantidad
+WHERE articulo.idarticulo = NEW.idarticulo
+;;
+DELIMITER ;
